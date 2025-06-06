@@ -1,0 +1,7 @@
+Package: ldap-IITMandi
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: James Davda
+Description: LDAP-based auto-login CLI tool for captive portals with login/logout and credential setup.

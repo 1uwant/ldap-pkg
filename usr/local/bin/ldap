@@ -1,0 +1,48 @@
+#/bin/bash
+
+SERVICE="ldap"
+
+case "$1" in
+    set-user)
+        read -p "Username : " USERNAME
+        if [[ -z "$USERNAME" ]]; then 
+                echo "Username cannot be empty"
+        fi
+        exit 1
+        
+        echo -n "$USERNAME" | secret-tool store --label="LDAP IITMandi Username" service "$SERVICE" key "ldap-username" 
+        echo "Username set successfully."
+    ;;
+    set-passwd)
+        read -s -p "Password : " PASSWORD
+        if [[ -z "$PASSWORD" ]]; then
+                echo "Password cannot be empty"
+        fi
+        exit 1
+
+        echo -n "$PASSWORD" | secret-tool store --label="LDAP IITMandi Password" service "$SERVICE" key "ldap-password"
+        echo "Password set successfully."
+    ;;
+    login)
+        USERNAME=$(secret-tool lookup service "$SERVICE" key "ldap-username")
+        PASSWORD=$(secret-tool lookup service "$SERVICE" key "ldap-password")
+
+        if [[ -z "$USERNAME" ]]; then
+            echo "LDAP Username is not set"
+            exit 1
+        fi
+        if [[ -z "$PASSWORD" ]]; then
+            echo "LDAP Password is not set"
+            exit 1
+        fi
+        /usr/local/bin/login.sh "$USERNAME" "$PASSWORD"
+    ;;
+    logout)
+        /usr/local/bin/logout.sh
+    ;;
+
+    *)
+        echo "Usage: $0 {set-user|set-passwd|login|logout}"
+        exit 1
+    ;;
+esac
